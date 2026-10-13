@@ -1,0 +1,1108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#070b13">
+    <meta name="description" content="GRIDGUARD — a simulation-based water pipeline monitoring and leak localization project.">
+    <title>GRIDGUARD — Every Drop Matters</title>
+
+    <style>
+        :root {
+            --bg: #070b13;
+            --surface: #0d1420;
+            --surface-2: #111c2b;
+            --line: rgba(159, 186, 219, .14);
+            --text: #f3f7fc;
+            --muted: #93a3b8;
+            --teal: #62f5d0;
+            --blue: #72a8ff;
+            --red: #ff647c;
+            --radius: 20px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+        body {
+            color: var(--text);
+            background:
+                radial-gradient(ellipse at 80% 0%, rgba(42, 106, 153, .13), transparent 34%),
+                var(--bg);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            opacity: .18;
+            background-image: radial-gradient(#55718c .7px, transparent .7px);
+            background-size: 23px 23px;
+            mask-image: linear-gradient(to bottom, black, transparent 85%);
+        }
+
+        a { color: inherit; text-decoration: none; }
+        button { font: inherit; }
+
+        .wrap {
+            width: min(1160px, calc(100% - 44px));
+            margin-inline: auto;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 1px solid var(--line);
+            background: rgba(7, 11, 19, .82);
+            backdrop-filter: blur(18px);
+        }
+
+        .nav {
+            min-height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-symbol {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            color: var(--teal);
+            border: 1px solid rgba(98, 245, 208, .3);
+            border-radius: 13px;
+            background: linear-gradient(145deg, rgba(98,245,208,.13), rgba(114,168,255,.06));
+            box-shadow: 0 0 24px rgba(98,245,208,.07);
+        }
+
+        .brand-symbol svg { width: 27px; height: 27px; }
+
+        .brand-name {
+            display: block;
+            font-size: 17px;
+            line-height: 1.2;
+            font-weight: 850;
+            letter-spacing: 2.2px;
+        }
+
+        .brand-caption {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            letter-spacing: 2.1px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 27px;
+            color: #b2bfd0;
+            font-size: 12px;
+        }
+
+        .nav-links a:not(.nav-cta):hover { color: var(--teal); }
+
+        .nav-cta {
+            padding: 10px 15px;
+            border: 1px solid rgba(98,245,208,.35);
+            border-radius: 10px;
+            color: var(--teal);
+            background: rgba(98,245,208,.055);
+            font-weight: 750;
+        }
+
+        .hero {
+            min-height: 630px;
+            padding-top: 77px;
+            padding-bottom: 75px;
+            display: grid;
+            grid-template-columns: 1.02fr .98fr;
+            align-items: center;
+            gap: 42px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--teal);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2.2px;
+            text-transform: uppercase;
+        }
+
+        .eyebrow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 13px var(--teal);
+        }
+
+        h1 {
+            margin-top: 23px;
+            font-size: clamp(43px, 5.5vw, 72px);
+            line-height: 1.02;
+            letter-spacing: -3.4px;
+            font-weight: 850;
+        }
+
+        .gradient {
+            color: var(--teal);
+            background: linear-gradient(100deg, #74f9d8 5%, #65cfe9 52%, #82aaff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-copy {
+            max-width: 560px;
+            margin-top: 23px;
+            color: #a5b4c7;
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        .hero-copy strong { color: #eaf3ff; font-weight: 650; }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 11px;
+            padding: 12px 18px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            font-size: 12px;
+            font-weight: 800;
+            transition: transform .2s, border-color .2s, background .2s;
+            cursor: pointer;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+
+        .btn-primary {
+            color: #051510;
+            background: var(--teal);
+            box-shadow: 0 8px 30px rgba(98,245,208,.12);
+        }
+
+        .btn-primary:hover { background: #a0ffe9; }
+
+        .btn-quiet {
+            color: #d8e4f2;
+            border-color: var(--line);
+            background: rgba(255,255,255,.025);
+        }
+
+        .btn-quiet:hover { border-color: rgba(98,245,208,.38); }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 25px;
+            color: #7f91a8;
+            font-size: 10px;
+        }
+
+        .hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+        .meta-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); }
+
+        /* Interactive pipeline card */
+        .network-card {
+            position: relative;
+            padding: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(142,177,216,.18);
+            border-radius: 22px;
+            background:
+                radial-gradient(ellipse at 52% 40%, rgba(29,87,120,.16), transparent 55%),
+                linear-gradient(145deg, #101c2b, #0a111c);
+            box-shadow: 0 28px 85px rgba(0,0,0,.25);
+        }
+
+        .network-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .35;
+            background-image:
+                linear-gradient(rgba(106,148,184,.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(106,148,184,.08) 1px, transparent 1px);
+            background-size: 25px 25px;
+            mask-image: linear-gradient(to bottom, black, transparent);
+        }
+
+        .network-head, .network-foot {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .micro-label {
+            color: #8ca0b8;
+            font-size: 9px;
+            letter-spacing: 1.8px;
+            font-weight: 800;
+        }
+
+        .demo-pill {
+            padding: 5px 9px;
+            border: 1px solid rgba(98,245,208,.2);
+            border-radius: 20px;
+            color: var(--teal);
+            background: rgba(98,245,208,.07);
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        .network-svg {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            display: block;
+            margin: 8px 0 2px;
+            overflow: visible;
+        }
+
+        .pipe {
+            fill: none;
+            stroke: #294359;
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .pipe-glow {
+            fill: none;
+            stroke: #57e7cf;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-dasharray: 5 12;
+            animation: flow 2.4s linear infinite;
+            opacity: .8;
+        }
+
+        .pipe-alert {
+            fill: none;
+            stroke: var(--red);
+            stroke-width: 6;
+            stroke-linecap: round;
+            filter: url(#redGlow);
+            animation: alertPulse 1.8s ease-in-out infinite;
+        }
+
+        .junction {
+            fill: #102537;
+            stroke: #62f5d0;
+            stroke-width: 2.5;
+        }
+
+        .junction-alert {
+            fill: #2d1523;
+            stroke: var(--red);
+            stroke-width: 2.5;
+        }
+
+        .network-foot {
+            padding-top: 14px;
+            border-top: 1px solid var(--line);
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            color: #9aabc0;
+            font-size: 9px;
+        }
+
+        .legend span { display: flex; align-items: center; gap: 6px; }
+        .legend i { width: 7px; height: 7px; display: inline-block; border-radius: 50%; }
+        .teal-dot { background: var(--teal); }
+        .red-dot { background: var(--red); }
+
+        .view-toggle {
+            border: 0;
+            background: transparent;
+            color: var(--teal);
+            font-size: 10px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        .network-caption {
+            position: relative;
+            z-index: 1;
+            margin-top: 12px;
+            color: #71859d;
+            font-size: 10px;
+        }
+
+        .leak-callout {
+            position: absolute;
+            z-index: 2;
+            right: 23px;
+            top: 47%;
+            padding: 8px 10px;
+            border: 1px solid rgba(255,100,124,.28);
+            border-radius: 8px;
+            color: #ffb1bd;
+            background: rgba(35,14,25,.93);
+            font-size: 9px;
+            letter-spacing: .6px;
+            box-shadow: 0 0 24px rgba(255,100,124,.08);
+            transition: opacity .2s, transform .2s;
+        }
+
+        .leak-callout::before {
+            content: "";
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            width: 22px;
+            border-top: 1px dashed var(--red);
+        }
+
+        .network-card.hide-leak .leak-callout,
+        .network-card.hide-leak .pipe-alert,
+        .network-card.hide-leak .leak-marker {
+            opacity: 0;
+        }
+
+        .network-card.hide-leak .pipe-glow { opacity: .45; }
+
+        .network-card.hide-leak .junction-alert {
+            stroke: #62f5d0;
+            fill: #102537;
+        }
+
+        .stats-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            margin-top: 12px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: rgba(13,20,32,.7);
+        }
+
+        .stat {
+            padding: 17px 20px;
+        }
+
+        .stat + .stat { border-left: 1px solid var(--line); }
+
+        .stat-number {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -.6px;
+        }
+
+        .stat-label {
+            margin-top: 3px;
+            color: #879bb2;
+            font-size: 9px;
+            letter-spacing: 1.1px;
+        }
+
+        .section { padding: 90px 0; border-top: 1px solid var(--line); }
+
+        .section-heading {
+            max-width: 690px;
+            margin-bottom: 30px;
+        }
+
+        .section-heading h2 {
+            margin-top: 12px;
+            font-size: clamp(29px, 4vw, 43px);
+            line-height: 1.18;
+            letter-spacing: -1.5px;
+        }
+
+        .section-heading p {
+            margin-top: 13px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 18px;
+        }
+
+        .problem-main, .side-note, .feature-card, .tech-card, .impact-card {
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: linear-gradient(145deg, rgba(17,28,43,.9), rgba(10,16,26,.85));
+        }
+
+        .problem-main { padding: 30px; }
+
+        .card-tag {
+            color: var(--teal);
+            font-size: 9px;
+            letter-spacing: 1.8px;
+            font-weight: 800;
+        }
+
+        .problem-main h3 {
+            margin-top: 15px;
+            max-width: 620px;
+            font-size: 25px;
+            line-height: 1.35;
+        }
+
+        .problem-main p {
+            margin-top: 15px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.95;
+        }
+
+        .side-stack { display: grid; gap: 18px; }
+        .side-note { padding: 23px; }
+        .side-note h3 { font-size: 16px; }
+        .side-note p { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.8; }
+
+        .feature-grid, .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card, .tech-card { padding: 24px; transition: transform .2s, border-color .2s; }
+        .feature-card:hover, .tech-card:hover { transform: translateY(-4px); border-color: rgba(98,245,208,.32); }
+
+        .feature-icon {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 18px;
+            border-radius: 12px;
+            color: var(--teal);
+            background: rgba(98,245,208,.08);
+            font-size: 20px;
+        }
+
+        .feature-card h3 { font-size: 16px; margin-bottom: 9px; }
+        .feature-card p, .tech-card p { color: var(--muted); font-size: 12px; line-height: 1.85; }
+
+        .step {
+            margin-bottom: 11px;
+            color: var(--teal);
+            font-size: 10px;
+            font-weight: 850;
+            letter-spacing: 1.6px;
+        }
+
+        .tech-card strong { display: block; margin-bottom: 8px; font-size: 15px; }
+        .tech-card .tech-label { display: block; margin-bottom: 9px; color: var(--blue); font-size: 9px; letter-spacing: 1.2px; }
+
+        .workflow {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .workflow-step {
+            position: relative;
+            padding: 20px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: rgba(13,20,32,.65);
+        }
+
+        .workflow-step .step-num { color: var(--teal); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; }
+        .workflow-step h3 { margin-top: 12px; font-size: 14px; }
+        .workflow-step p { margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.8; }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 17px;
+        }
+
+        .impact-card { padding: 26px; }
+        .impact-number { color: var(--teal); font-size: 10px; font-weight: 850; letter-spacing: 1.5px; }
+        .impact-card h3 { margin-top: 10px; font-size: 19px; }
+        .impact-card p { margin-top: 9px; color: var(--muted); font-size: 12px; line-height: 1.85; }
+
+        .honesty {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 20px;
+            border: 1px solid rgba(114,168,255,.2);
+            border-radius: 14px;
+            background: rgba(114,168,255,.045);
+        }
+
+        .honesty-icon { color: var(--blue); font-size: 19px; }
+        .honesty strong { display: block; font-size: 12px; }
+        .honesty p { margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.85; }
+
+        .final-cta {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 28px;
+            overflow: hidden;
+            padding: 38px;
+            border: 1px solid rgba(98,245,208,.23);
+            border-radius: 22px;
+            background:
+                radial-gradient(ellipse at 100% 0%, rgba(98,245,208,.1), transparent 45%),
+                #0d1724;
+        }
+
+        .final-cta h2 { margin-top: 11px; font-size: clamp(25px, 4vw, 36px); line-height: 1.2; }
+        .final-cta p { margin-top: 10px; color: var(--muted); font-size: 13px; max-width: 560px; }
+
+        footer {
+            padding: 25px 0 32px;
+            border-top: 1px solid var(--line);
+            color: #74869d;
+            font-size: 10px;
+        }
+
+        .footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 13px; }
+
+        .reveal { opacity: 0; transform: translateY(16px); transition: opacity .65s ease, transform .65s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        @keyframes flow { to { stroke-dashoffset: -68; } }
+        @keyframes alertPulse { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+            .reveal { opacity: 1; transform: none; }
+        }
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; padding-top: 60px; gap: 30px; }
+            .hero-copy { max-width: 700px; }
+            .network-card { max-width: 720px; width: 100%; }
+            .problem-grid { grid-template-columns: 1fr; }
+            .workflow { grid-template-columns: repeat(2, 1fr); }
+            .feature-grid, .tech-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 620px) {
+            .wrap { width: calc(100% - 28px); }
+            .nav { min-height: 68px; }
+            .nav-links { gap: 10px; }
+            .nav-links a:not(.nav-cta) { display: none; }
+            h1 { letter-spacing: -2px; }
+            .hero { padding-top: 47px; padding-bottom: 50px; }
+            .hero-actions .btn { width: 100%; }
+            .section { padding: 62px 0; }
+            .feature-grid, .tech-grid, .workflow, .impact-grid { grid-template-columns: 1fr; }
+            .stats-strip { grid-template-columns: 1fr; }
+            .stat { padding: 13px 17px; }
+            .stat + .stat { border-left: 0; border-top: 1px solid var(--line); }
+            .final-cta { flex-direction: column; align-items: flex-start; padding: 25px; }
+            .final-cta .btn { width: 100%; }
+            .leak-callout { right: 13px; font-size: 8px; }
+            .network-card { padding: 14px; }
+            .network-foot { align-items: flex-start; flex-direction: column; }
+        }
+    </style>
+</head>
+
+<body>
+<header class="topbar">
+    <div class="wrap nav">
+        <a class="brand" href="#home" aria-label="GRIDGUARD home">
+            <span class="brand-symbol" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none">
+                    <path d="M16 3C12 10 6 16 6 21a10 10 0 0 0 20 0c0-5-6-11-10-18Z"
+                          stroke="currentColor" stroke-width="2"/>
+                    <path d="m11 19 4 4 7-8" stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span>
+                <span class="brand-name">GRIDGUARD</span>
+                <span class="brand-caption">WATER INTELLIGENCE</span>
+            </span>
+        </a>
+
+        <nav class="nav-links" aria-label="Page navigation">
+            <a href="#problem">The Problem</a>
+            <a href="#solution">Our Approach</a>
+            <a href="#technology">Technology</a>
+            <a class="nav-cta" href="./dashboard.html" target="_blank">Launch Dashboard ↗</a>
+        </nav>
+    </div>
+</header>
+
+<main id="home">
+    <section class="wrap hero">
+        <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> INTELLIGENT WATER INFRASTRUCTURE</div>
+
+            <h1>
+                Every drop<br>
+                deserves a <span class="gradient">guardian.</span>
+            </h1>
+
+            <p class="hero-copy">
+                Water leaks don't always announce themselves. Some remain hidden
+                inside the infrastructure we depend on every day.
+                <strong>GRIDGUARD explores how pipeline pressure and flow patterns
+                can help reveal suspicious conditions and narrow the search for
+                potential leaks.</strong>
+            </p>
+
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="/dashboard.html" target="_blank">
+                    Explore Live Dashboard <span aria-hidden="true">↗</span>
+                </a>
+                <a class="btn btn-quiet" href="#problem">
+                    Discover the mission <span aria-hidden="true">↓</span>
+                </a>
+            </div>
+
+            <div class="hero-meta">
+                <span><i class="meta-dot"></i> Interactive simulation</span>
+                <span><i class="meta-dot"></i> Python-powered prototype</span>
+                <span><i class="meta-dot"></i> Built for SDG 6</span>
+            </div>
+        </div>
+
+        <div>
+            <div class="network-card" id="networkCard">
+                <div class="network-head">
+                    <span class="micro-label">DIGITAL TWIN / CONCEPT VIEW</span>
+                    <span class="demo-pill">SIMULATED SCENARIO</span>
+                </div>
+
+                <div class="leak-callout" id="leakCallout">⚠ POSSIBLE LEAK ZONE</div>
+
+                <svg class="network-svg" viewBox="0 0 520 360"
+                     role="img" aria-label="Illustrative virtual pipeline network with a highlighted simulated leak segment">
+                    <defs>
+                        <filter id="tealGlow" x="-80%" y="-80%" width="260%" height="260%">
+                            <feGaussianBlur stdDeviation="4" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <filter id="redGlow" x="-100%" y="-100%" width="300%" height="300%">
+                            <feGaussianBlur stdDeviation="6" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <pattern id="microGrid" width="26" height="26" patternUnits="userSpaceOnUse">
+                            <path d="M26 0H0V26" fill="none" stroke="#2b4055" stroke-width=".7"/>
+                        </pattern>
+                    </defs>
+
+                    <rect x="1" y="1" width="518" height="358" rx="14"
+                          fill="url(#microGrid)" opacity=".68"/>
+
+                    <g class="pipe">
+                        <path d="M48 180H153L230 96H365L440 158"/>
+                        <path d="M153 180L230 266H365L440 220"/>
+                        <path d="M230 96V266"/>
+                        <path d="M230 180H365"/>
+                        <path d="M365 96V266"/>
+                        <path d="M365 180L440 220"/>
+                    </g>
+
+                    <g class="pipe-glow" filter="url(#tealGlow)">
+                        <path d="M48 180H153L230 96H365L440 158"/>
+                        <path d="M153 180L230 266H365"/>
+                        <path d="M230 96V266"/>
+                        <path d="M230 180H365"/>
+                        <path d="M365 96V266"/>
+                    </g>
+
+                    <path class="pipe-alert" d="M230 180H365"/>
+                    <g class="leak-marker">
+                        <circle cx="298" cy="180" r="18" fill="#ff647c" opacity=".10"/>
+                        <circle cx="298" cy="180" r="11" fill="#ff647c" opacity=".14"/>
+                        <path d="M298 192C289 205 288 210 298 215C308 210 307 205 298 192Z"
+                              fill="#ff647c" filter="url(#redGlow)"/>
+                        <circle cx="298" cy="180" r="4" fill="#fff2f4"/>
+                    </g>
+
+                    <g filter="url(#tealGlow)">
+                        <circle class="junction" cx="48" cy="180" r="9"/>
+                        <circle class="junction" cx="153" cy="180" r="9"/>
+                        <circle class="junction" cx="230" cy="96" r="9"/>
+                        <circle class="junction" cx="230" cy="266" r="9"/>
+                        <circle class="junction" cx="365" cy="96" r="9"/>
+                        <circle class="junction" cx="365" cy="266" r="9"/>
+                        <circle class="junction-alert" cx="365" cy="180" r="10"/>
+                        <circle class="junction" cx="440" cy="158" r="8"/>
+                        <circle class="junction" cx="440" cy="220" r="8"/>
+                    </g>
+
+                    <g fill="#91a8be" font-size="11" font-family="Segoe UI, Arial, sans-serif">
+                        <text x="30" y="157">SOURCE</text>
+                        <text x="136" y="205">J-01</text>
+                        <text x="213" y="76">J-02</text>
+                        <text x="213" y="290">J-03</text>
+                        <text x="349" y="76">J-04</text>
+                        <text x="349" y="290">J-05</text>
+                        <text x="426" y="140">J-06</text>
+                        <text x="426" y="243">J-07</text>
+                    </g>
+
+                    <g fill="#ff9cac" font-size="10" font-family="Segoe UI, Arial, sans-serif">
+                        <text x="269" y="151">ANOMALY ZONE</text>
+                    </g>
+
+                    <path d="M298 155V141" stroke="#ff647c" stroke-dasharray="3 3" stroke-width="1.2"/>
+                </svg>
+
+                <div class="network-foot">
+                    <div class="legend">
+                        <span><i class="teal-dot"></i> Network link</span>
+                        <span><i class="red-dot"></i> Illustrative leak</span>
+                    </div>
+                    <button class="view-toggle" id="toggleLeak" type="button" aria-pressed="true">
+                        Hide highlight ↗
+                    </button>
+                </div>
+                <p class="network-caption">
+                    Concept illustration only. The interactive dashboard uses the actual simulated network.
+                </p>
+            </div>
+
+            <div class="stats-strip" aria-label="Project summary">
+                <div class="stat">
+                    <div class="stat-number">01</div>
+                    <div class="stat-label">WATER-FIRST MISSION</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">24/7*</div>
+                    <div class="stat-label">MONITORING CONCEPT</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">SDG 06</div>
+                    <div class="stat-label">PRIMARY IMPACT GOAL</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="problem">
+        <div class="wrap">
+            <div class="section-heading reveal">
+                <div class="eyebrow"><span class="eyebrow-dot"></span> THE CHALLENGE</div>
+                <h2>When the leak is hidden,<br><span class="gradient">the loss keeps flowing.</span></h2>
+                <p>
+                    Water distribution systems are made of connected pipes and junctions.
+                    When a leak develops out of sight, identifying the affected section
+                    can be difficult. Teams need useful signals to decide where to investigate.
+                </p>
+            </div>
+
+            <div class="problem-grid reveal">
+                <article class="problem-main">
+                    <div class="card-tag">THE PROBLEM STATEMENT</div>
+                    <h3>How might we use pipeline pressure and flow patterns to identify unusual conditions and help locate hidden water leaks?</h3>
+                    <p>
+                        Undetected pipeline leaks can waste clean water, increase repair costs,
+                        and contribute to infrastructure damage. Direct inspection across an
+                        extensive network may take time. GRIDGUARD demonstrates a virtual
+                        monitoring workflow that makes a pipeline network visible, lets users
+                        create leak scenarios, and presents readings and investigation results
+                        in one interface.
+                    </p>
+                </article>
+
+                <div class="side-stack">
+                    <article class="side-note">
+                        <div class="card-tag">WHY IT MATTERS</div>
+                        <h3>Water is a critical resource.</h3>
+                        <p>
+                            Better awareness of suspicious conditions can support investigation
+                            and help water managers prioritize where to look first.
+                        </p>
+                    </article>
+                    <article class="side-note">
+                        <div class="card-tag">THE CURRENT CHALLENGE</div>
+                        <h3>Detection is not the same as localization.</h3>
+                        <p>
+                            An unusual reading may suggest a problem. Determining which pipe
+                            caused it requires a separate localization method and validation.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="solution">
+        <div class="wrap">
+            <div class="section-heading reveal">
+                <div class="eyebrow"><span class="eyebrow-dot"></span> OUR APPROACH</div>
+                <h2>A pipeline network you can <span class="gradient">investigate.</span></h2>
+                <p>
+                    GRIDGUARD combines a virtual water network, generated telemetry, and an
+                    interactive dashboard. The current prototype is designed to demonstrate
+                    the workflow and provide a foundation for independent anomaly detection
+                    and leak localization.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card reveal">
+                    <div class="feature-icon" aria-hidden="true">⌘</div>
+                    <div class="card-tag">01 / MODEL</div>
+                    <h3>Map the network</h3>
+                    <p>
+                        Represent junctions and pipe connections as a graph so the network
+                        structure can be explored in software.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon" aria-hidden="true">〰</div>
+                    <div class="card-tag">02 / SIMULATE</div>
+                    <h3>Create a scenario</h3>
+                    <p>
+                        Generate illustrative pressure and flow readings, then introduce a
+                        controlled simulated leak on a selected pipe.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon" aria-hidden="true">◎</div>
+                    <div class="card-tag">03 / INVESTIGATE</div>
+                    <h3>Review the signals</h3>
+                    <p>
+                        Inspect network status, telemetry, pressure comparisons, and the
+                        results returned by the current baseline detector.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="technology">
+        <div class="wrap">
+            <div class="section-heading reveal">
+                <div class="eyebrow"><span class="eyebrow-dot"></span> UNDER THE HOOD</div>
+                <h2>Small stack. <span class="gradient">Clear purpose.</span></h2>
+                <p>
+                    Each technology has a specific role in the prototype, from modeling the
+                    virtual network to presenting results in the browser.
+                </p>
+            </div>
+
+            <div class="tech-grid">
+                <article class="tech-card reveal">
+                    <span class="tech-label">CORE LANGUAGE</span>
+                    <strong>Python</strong>
+                    <p>Runs the simulation logic, builds dashboard data, and connects the components.</p>
+                </article>
+
+                <article class="tech-card reveal">
+                    <span class="tech-label">NETWORK MODEL</span>
+                    <strong>NetworkX</strong>
+                    <p>Represents the pipeline as connected junctions and pipe segments.</p>
+                </article>
+
+                <article class="tech-card reveal">
+                    <span class="tech-label">NUMERICAL READINGS</span>
+                    <strong>NumPy</strong>
+                    <p>Generates illustrative pressure variation and simulated measurement noise.</p>
+                </article>
+
+                <article class="tech-card reveal">
+                    <span class="tech-label">WEB API</span>
+                    <strong>Flask</strong>
+                    <p>Serves the web pages and exposes endpoints for dashboard and simulation actions.</p>
+                </article>
+
+                <article class="tech-card reveal">
+                    <span class="tech-label">USER INTERFACE</span>
+                    <strong>HTML & CSS</strong>
+                    <p>Creates the dashboard structure and visual design for monitoring and investigation.</p>
+                </article>
+
+                <article class="tech-card reveal">
+                    <span class="tech-label">INTERACTIVITY</span>
+                    <strong>JavaScript</strong>
+                    <p>Requests dashboard data, updates the display, and handles user interactions.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="workflow">
+        <div class="wrap">
+            <div class="section-heading reveal">
+                <div class="eyebrow"><span class="eyebrow-dot"></span> SYSTEM WORKFLOW</div>
+                <h2>From virtual pipes to <span class="gradient">visible results.</span></h2>
+                <p>
+                    Follow the current end-to-end demonstration from the web interface
+                    through the Python backend.
+                </p>
+            </div>
+
+            <div class="workflow">
+                <article class="workflow-step reveal">
+                    <div class="step-num">STEP 01</div>
+                    <h3>Open the dashboard</h3>
+                    <p>The browser loads the dashboard page served by the Flask application.</p>
+                </article>
+                <article class="workflow-step reveal">
+                    <div class="step-num">STEP 02</div>
+                    <h3>Load network data</h3>
+                    <p>Python builds the virtual network and generates simulated telemetry.</p>
+                </article>
+                <article class="workflow-step reveal">
+                    <div class="step-num">STEP 03</div>
+                    <h3>Simulate a leak</h3>
+                    <p>Select a pipe and severity to create a controlled test scenario.</p>
+                </article>
+                <article class="workflow-step reveal">
+                    <div class="step-num">STEP 04</div>
+                    <h3>Inspect the outcome</h3>
+                    <p>Review the updated network, readings, and baseline detector output.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="impact">
+        <div class="wrap">
+            <div class="section-heading reveal">
+                <div class="eyebrow"><span class="eyebrow-dot"></span> IMPACT BY DESIGN</div>
+                <h2>Engineering for a more <span class="gradient">water-aware world.</span></h2>
+                <p>
+                    GRIDGUARD connects a software engineering prototype to a real-world
+                    challenge: reducing avoidable water loss and improving infrastructure awareness.
+                </p>
+            </div>
+
+            <div class="impact-grid reveal">
+                <article class="impact-card">
+                    <div class="impact-number">PRIMARY · SDG 6</div>
+                    <h3>Clean Water and Sanitation</h3>
+                    <p>
+                        Explores how digital monitoring concepts could support the investigation
+                        of water loss and more responsible water distribution.
+                    </p>
+                </article>
+                <article class="impact-card">
+                    <div class="impact-number">SECONDARY · SDG 11</div>
+                    <h3>Sustainable Cities and Communities</h3>
+                    <p>
+                        Investigates how smarter infrastructure tools could contribute to
+                        more resilient urban services.
+                    </p>
+                </article>
+            </div>
+
+            <div class="honesty reveal" style="margin-top:18px">
+                <span class="honesty-icon" aria-hidden="true">ⓘ</span>
+                <div>
+                    <strong>Prototype transparency</strong>
+                    <p>
+                        The current build uses simulated data. Its baseline detector reads
+                        the simulated leak label rather than independently inferring a leak
+                        from pressure and flow. The dashboard is a demonstration, not a
+                        validated real-world detection system. Independent anomaly detection,
+                        localization confidence, and physical sensor integration are future work.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="wrap">
+            <div class="final-cta reveal">
+                <div>
+                    <div class="eyebrow"><span class="eyebrow-dot"></span> YOUR MISSION STARTS HERE</div>
+                    <h2>See the network.<br><span class="gradient">Test the scenario.</span></h2>
+                    <p>
+                        Enter the GRIDGUARD dashboard to explore the virtual pipeline,
+                        simulate a leak, and inspect the readings generated by the system.
+                    </p>
+                </div>
+                <a class="btn btn-primary" href="/dashboard.html">
+                    Launch GRIDGUARD Dashboard <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="wrap footer-row">
+        <span>© GRIDGUARD · Hackathon Prototype</span>
+        <span>Simulation only · No physical sensors connected</span>
+        <a href="#home">Back to top ↑</a>
+    </div>
+</footer>
+
+<script>
+    // Interactive illustrative leak highlight.
+    const networkCard = document.getElementById("networkCard");
+    const toggleLeak = document.getElementById("toggleLeak");
+
+    toggleLeak.addEventListener("click", () => {
+        const hidden = networkCard.classList.toggle("hide-leak");
+        toggleLeak.textContent = hidden ? "Show highlight ↗" : "Hide highlight ↗";
+        toggleLeak.setAttribute("aria-pressed", String(!hidden));
+    });
+
+    // Reveal sections as they enter the viewport.
+    const revealItems = document.querySelectorAll(".reveal");
+
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        revealItems.forEach((item) => observer.observe(item));
+    } else {
+        revealItems.forEach((item) => item.classList.add("visible"));
+    }
+</script>
+</body>
+</html>

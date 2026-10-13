@@ -1,0 +1,618 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080f1d">
+    <meta name="description" content="GRIDGUARD — AI-powered water pipeline monitoring and leak detection simulation.">
+
+    <title>GRIDGUARD | Intelligent Water Infrastructure</title>
+
+    <link rel="stylesheet" href="./style.css">
+    <script src="/script.js" defer></script>
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="#overview" aria-label="GRIDGUARD home">
+                <span class="brand-mark">
+                    <svg viewBox="0 0 48 48" aria-hidden="true">
+                        <path d="M24 4C19 13 9 23 9 31a15 15 0 0 0 30 0C39 23 29 13 24 4Z"
+                              fill="none" stroke="currentColor" stroke-width="3"/>
+                        <path d="M16 30a8 8 0 0 0 8 8"
+                              fill="none" stroke="currentColor" stroke-width="3"
+                              stroke-linecap="round"/>
+                        <path d="m19 23 5 5 8-9"
+                              fill="none" stroke="#5de4c7" stroke-width="3"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+
+                <span class="brand-copy">
+                    <strong>GRIDGUARD</strong>
+                    <small>WATER INTELLIGENCE</small>
+                </span>
+            </a>
+
+            <div class="workspace-label">WORKSPACE</div>
+
+            <nav class="nav-menu" aria-label="Main navigation">
+                <a class="nav-link active" href="#overview" data-section="overview">
+                    <span class="nav-icon">◫</span>
+                    <span>Overview</span>
+                </a>
+
+                <a class="nav-link" href="#network" data-section="network">
+                    <span class="nav-icon">⌘</span>
+                    <span>Pipeline Network</span>
+                </a>
+
+                <a class="nav-link" href="#monitoring" data-section="monitoring">
+                    <span class="nav-icon">⌁</span>
+                    <span>Live Monitoring</span>
+                </a>
+
+                <a class="nav-link" href="#detection" data-section="detection">
+                    <span class="nav-icon">◎</span>
+                    <span>Leak Detection</span>
+                    <span class="nav-count" id="navLeakCount">0</span>
+                </a>
+
+                <a class="nav-link" href="#analytics" data-section="analytics">
+                    <span class="nav-icon">▥</span>
+                    <span>Analytics</span>
+                </a>
+
+                <a class="nav-link" href="#alerts" data-section="alerts">
+                    <span class="nav-icon">♧</span>
+                    <span>Alerts & Events</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="connection-card">
+                    <div class="connection-heading">
+                        <span class="status-dot" id="sidebarStatusDot"></span>
+                        <strong id="connectionLabel">Connecting...</strong>
+                    </div>
+
+                    <p id="connectionDescription">
+                        Checking the Python API
+                    </p>
+
+                    <span class="environment-tag">
+                        <span class="tiny-dot"></span>
+                        SIMULATION ENVIRONMENT
+                    </span>
+                </div>
+
+                <div class="sidebar-footer">
+                    <span>GRIDGUARD</span>
+                    <span>HACKATHON EDITION</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN APPLICATION -->
+        <main class="main-content">
+
+            <!-- TOP BAR -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="icon-button mobile-menu-button"
+                            id="menuToggle"
+                            aria-label="Toggle navigation"
+                            aria-expanded="false">
+                        ☰
+                    </button>
+
+                    <div class="breadcrumb">
+                        <span>Infrastructure</span>
+                        <span class="breadcrumb-separator">/</span>
+                        <strong id="breadcrumbCurrent">Overview</strong>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <div class="live-indicator">
+                        <span class="status-dot" id="topStatusDot"></span>
+                        <span id="topStatusText">Connecting</span>
+                    </div>
+
+                    <span class="topbar-divider"></span>
+
+                    <div class="user-profile">
+                        <div class="avatar">GG</div>
+                        <div class="user-details">
+                            <strong>Operations Team</strong>
+                            <small>Water Infrastructure</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- PAGE CONTENT -->
+            <div class="page-content">
+
+                <!-- PAGE INTRO -->
+                <section class="page-intro" id="overview">
+                    <div>
+                        <div class="eyebrow">
+                            <span class="eyebrow-line"></span>
+                            INTELLIGENT WATER INFRASTRUCTURE
+                        </div>
+
+                        <h1>Network <span class="text-gradient">Command Center</span></h1>
+
+                        <p class="page-description">
+                            Monitor pipeline health, investigate pressure anomalies,
+                            and simulate hidden water leaks from one unified workspace.
+                        </p>
+                    </div>
+
+                    <div class="intro-actions">
+                        <div class="last-updated">
+                            <span class="last-updated-label">LAST DATA UPDATE</span>
+                            <strong id="lastUpdated">Waiting for data...</strong>
+                        </div>
+
+                        <button class="button button-secondary" id="refreshButton">
+                            <span class="button-icon">↻</span>
+                            Refresh data
+                        </button>
+                    </div>
+                </section>
+
+                <!-- SIMULATION NOTICE -->
+                <section class="simulation-banner">
+                    <div class="simulation-banner-icon">ⓘ</div>
+                    <div>
+                        <strong>Simulation environment</strong>
+                        <p>
+                            Readings are generated by the GRIDGUARD Python simulator.
+                            They are not measurements from physical water sensors.
+                        </p>
+                    </div>
+                    <span class="simulation-badge">DEMO MODE</span>
+                </section>
+
+                <!-- KPI CARDS -->
+                <section class="metrics-grid" aria-label="Network summary">
+
+                    <article class="metric-card">
+                        <div class="metric-topline">
+                            <span class="metric-label">NETWORK JUNCTIONS</span>
+                            <span class="metric-icon metric-icon-blue">⌘</span>
+                        </div>
+
+                        <div class="metric-value" id="junctionCount">—</div>
+
+                        <div class="metric-foot">
+                            <span class="metric-neutral">●</span>
+                            <span>Connected monitoring points</span>
+                        </div>
+
+                        <div class="metric-decoration decoration-blue"></div>
+                    </article>
+
+                    <article class="metric-card">
+                        <div class="metric-topline">
+                            <span class="metric-label">PIPELINE SEGMENTS</span>
+                            <span class="metric-icon metric-icon-purple">⌁</span>
+                        </div>
+
+                        <div class="metric-value" id="pipeCount">—</div>
+
+                        <div class="metric-foot">
+                            <span class="metric-neutral">●</span>
+                            <span>Registered pipe connections</span>
+                        </div>
+
+                        <div class="metric-decoration decoration-purple"></div>
+                    </article>
+
+                    <article class="metric-card">
+                        <div class="metric-topline">
+                            <span class="metric-label">AVERAGE PRESSURE</span>
+                            <span class="metric-icon metric-icon-teal">↗</span>
+                        </div>
+
+                        <div class="metric-value">
+                            <span id="averagePressure">—</span>
+                            <span class="metric-unit">PSI*</span>
+                        </div>
+
+                        <div class="metric-foot">
+                            <span class="metric-neutral">●</span>
+                            <span>Simulated pressure reading</span>
+                        </div>
+
+                        <div class="metric-decoration decoration-teal"></div>
+                    </article>
+
+                    <article class="metric-card">
+                        <div class="metric-topline">
+                            <span class="metric-label">ACTIVE LEAKS</span>
+                            <span class="metric-icon metric-icon-red">!</span>
+                        </div>
+
+                        <div class="metric-value" id="activeLeakCount">0</div>
+
+                        <div class="metric-foot">
+                            <span class="metric-neutral" id="leakStatusDot">●</span>
+                            <span id="leakStatusText">No simulated leaks</span>
+                        </div>
+
+                        <div class="metric-decoration decoration-red"></div>
+                    </article>
+
+                </section>
+
+                <!-- NETWORK OVERVIEW -->
+                <section class="content-grid network-overview-grid" id="network">
+
+                    <article class="panel network-panel">
+                        <div class="panel-header">
+                            <div>
+                                <div class="panel-kicker">INFRASTRUCTURE MAP</div>
+                                <h2>Pipeline topology</h2>
+                                <p class="panel-description">
+                                    Select a pipe to inspect its simulation status.
+                                </p>
+                            </div>
+
+                            <div class="panel-header-actions">
+                                <span class="status-pill">
+                                    <span class="status-dot"></span>
+                                    <span id="networkHealthLabel">Loading</span>
+                                </span>
+
+                                <button class="icon-button"
+                                        id="fitNetworkButton"
+                                        title="Reset network view"
+                                        aria-label="Reset network view">
+                                    ⤢
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="network-map-wrap">
+                            <div class="map-grid-background"></div>
+
+                            <div class="map-watermark">GRIDGUARD / NETWORK 001</div>
+
+                            <svg id="networkSvg"
+                                 class="network-svg"
+                                 viewBox="0 0 100 100"
+                                 role="img"
+                                 aria-label="Interactive simulated water pipeline network">
+                                <text x="50" y="48" text-anchor="middle"
+                                      fill="currentColor" font-size="4">
+                                    Waiting for pipeline data...
+                                </text>
+                            </svg>
+
+                            <div class="map-legend">
+                                <span><i class="legend-line legend-normal"></i> Normal pipe</span>
+                                <span><i class="legend-line legend-leak"></i> Simulated leak</span>
+                                <span><i class="legend-node"></i> Junction</span>
+                            </div>
+                        </div>
+
+                        <div class="network-footer">
+                            <div>
+                                <span class="footer-label">NETWORK STATUS</span>
+                                <strong id="networkStatusText">Awaiting API</strong>
+                            </div>
+
+                            <div>
+                                <span class="footer-label">ACTIVE CONNECTIONS</span>
+                                <strong id="activeConnections">—</strong>
+                            </div>
+
+                            <button class="text-button" id="viewNetworkDetails">
+                                View details →
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- SIMULATOR CONTROL PANEL -->
+                    <article class="panel simulator-panel">
+                        <div class="panel-header">
+                            <div>
+                                <div class="panel-kicker">TEST ENVIRONMENT</div>
+                                <h2>Leak simulator</h2>
+                                <p class="panel-description">
+                                    Create a controlled leak scenario.
+                                </p>
+                            </div>
+
+                            <span class="control-icon">⌁</span>
+                        </div>
+
+                        <div class="simulator-status" id="simulatorStatus">
+                            <span class="simulator-status-icon">✓</span>
+                            <div>
+                                <strong>Network ready</strong>
+                                <p>Configure a scenario below.</p>
+                            </div>
+                        </div>
+
+                        <form id="leakForm" class="simulator-form">
+
+                            <label for="pipeSelect">Target pipe segment</label>
+                            <select id="pipeSelect" name="pipe" required>
+                                <option value="">Loading pipeline...</option>
+                            </select>
+
+                            <div class="form-label-row">
+                                <label for="severitySlider">Leak severity</label>
+                                <strong id="severityValue">50%</strong>
+                            </div>
+
+                            <input id="severitySlider"
+                                   name="severity"
+                                   type="range"
+                                   min="10"
+                                   max="100"
+                                   step="5"
+                                   value="50">
+
+                            <div class="range-labels">
+                                <span>Minor · 10%</span>
+                                <span>Critical · 100%</span>
+                            </div>
+
+                            <div class="severity-preview">
+                                <span class="severity-preview-dot"></span>
+                                <span id="severityDescription">
+                                    Moderate simulated leak
+                                </span>
+                            </div>
+
+                            <button class="button button-primary button-full"
+                                    id="simulateButton"
+                                    type="submit">
+                                <span>⚡</span>
+                                Simulate leak
+                            </button>
+
+                            <button class="button button-secondary button-full"
+                                    id="resetButton"
+                                    type="button">
+                                ↺ Reset network
+                            </button>
+                        </form>
+
+                        <p class="form-footnote">
+                            Actions modify the running Python simulation.
+                            They do not control physical infrastructure.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- MONITORING -->
+                <section class="panel monitoring-panel" id="monitoring">
+                    <div class="panel-header">
+                        <div>
+                            <div class="panel-kicker">SENSOR SIMULATION</div>
+                            <h2>Live monitoring</h2>
+                            <p class="panel-description">
+                                Inspect pressure and flow values at every junction.
+                            </p>
+                        </div>
+
+                        <div class="monitoring-controls">
+                            <label class="search-field">
+                                <span>⌕</span>
+                                <input id="junctionSearch"
+                                       type="search"
+                                       placeholder="Search junction..."
+                                       aria-label="Search junctions">
+                            </label>
+
+                            <select id="junctionStatusFilter"
+                                    aria-label="Filter junction status">
+                                <option value="all">All junctions</option>
+                                <option value="normal">Normal</option>
+                                <option value="warning">Warning</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>JUNCTION</th>
+                                    <th>PRESSURE</th>
+                                    <th>BASELINE</th>
+                                    <th>FLOW</th>
+                                    <th>VARIANCE</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="monitoringTableBody">
+                                <tr>
+                                    <td colspan="6" class="empty-state">
+                                        Waiting for Python telemetry...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <span id="monitoringRecordCount">0 monitoring points</span>
+                        <span>All readings are simulated</span>
+                    </div>
+                </section>
+
+                <!-- DETECTION AND ANALYTICS -->
+                <section class="content-grid lower-grid">
+
+                    <article class="panel detection-panel" id="detection">
+                        <div class="panel-header">
+                            <div>
+                                <div class="panel-kicker">INVESTIGATION QUEUE</div>
+                                <h2>Leak detection results</h2>
+                                <p class="panel-description">
+                                    Pipe segments flagged by the current Python detector.
+                                </p>
+                            </div>
+
+                            <span class="result-count" id="detectionResultCount">0 results</span>
+                        </div>
+
+                        <div class="detection-list" id="detectionList">
+                            <div class="empty-state">
+                                No detection results received yet.
+                            </div>
+                        </div>
+
+                        <div class="panel-bottom-note">
+                            <span class="info-icon">ⓘ</span>
+                            The current baseline detector reads simulated leak labels.
+                            Its results are not independent AI predictions.
+                        </div>
+                    </article>
+
+                    <article class="panel analytics-panel" id="analytics">
+                        <div class="panel-header">
+                            <div>
+                                <div class="panel-kicker">SYSTEM TELEMETRY</div>
+                                <h2>Pressure profile</h2>
+                                <p class="panel-description">
+                                    Current readings versus healthy baseline.
+                                </p>
+                            </div>
+
+                            <span class="chart-unit">PSI*</span>
+                        </div>
+
+                        <div class="chart-legend">
+                            <span><i class="chart-legend-dot chart-dot-current"></i> Current</span>
+                            <span><i class="chart-legend-dot chart-dot-baseline"></i> Baseline</span>
+                        </div>
+
+                        <div class="chart-container" id="pressureChartContainer">
+                            <canvas id="pressureChart"
+                                    aria-label="Pressure comparison chart"
+                                    role="img"></canvas>
+                        </div>
+
+                        <div class="chart-summary">
+                            <div>
+                                <span class="chart-summary-label">CURRENT AVG.</span>
+                                <strong id="chartCurrentAverage">—</strong>
+                            </div>
+
+                            <div>
+                                <span class="chart-summary-label">BASELINE AVG.</span>
+                                <strong id="chartBaselineAverage">—</strong>
+                            </div>
+
+                            <div>
+                                <span class="chart-summary-label">DIFFERENCE</span>
+                                <strong id="chartDifference">—</strong>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- ALERTS -->
+                <section class="panel alerts-panel" id="alerts">
+                    <div class="panel-header">
+                        <div>
+                            <div class="panel-kicker">EVENT CENTER</div>
+                            <h2>Alerts & system events</h2>
+                            <p class="panel-description">
+                                Review recent dashboard and simulation activity.
+                            </p>
+                        </div>
+
+                        <button class="button button-secondary"
+                                id="clearAlertsButton">
+                            Clear events
+                        </button>
+                    </div>
+
+                    <div class="alert-filters">
+                        <button class="filter-chip active"
+                                data-alert-filter="all">All events</button>
+                        <button class="filter-chip"
+                                data-alert-filter="leak">Leak events</button>
+                        <button class="filter-chip"
+                                data-alert-filter="system">System events</button>
+                    </div>
+
+                    <div class="event-list" id="eventList">
+                        <div class="empty-state">
+                            System events will appear here.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FOOTER -->
+                <footer class="page-footer">
+                    <div class="footer-brand">
+                        <span class="footer-brand-mark">◆</span>
+                        <strong>GRIDGUARD</strong>
+                        <span>Intelligent Water Infrastructure</span>
+                    </div>
+
+                    <div class="footer-disclaimer">
+                        Educational prototype · Simulated data · Not for operational decisions
+                    </div>
+
+                    <button class="text-button" id="apiStatusButton">
+                        API status: <span id="footerApiStatus">Checking...</span>
+                    </button>
+                </footer>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- PIPE DETAILS MODAL -->
+    <div class="modal-backdrop hidden" id="pipeModalBackdrop">
+        <section class="modal"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="pipeModalTitle">
+
+            <div class="modal-header">
+                <div>
+                    <div class="panel-kicker">SEGMENT INSPECTOR</div>
+                    <h2 id="pipeModalTitle">Pipe details</h2>
+                </div>
+
+                <button class="icon-button"
+                        id="closePipeModal"
+                        aria-label="Close pipe details">✕</button>
+            </div>
+
+            <div id="pipeModalContent">
+                Select a pipe on the network map to inspect it.
+            </div>
+
+            <div class="modal-footer">
+                <button class="button button-secondary"
+                        id="closePipeModalButton">Close</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div class="toast-container"
+         id="toastContainer"
+         aria-live="polite"
+         aria-atomic="false"></div>
+
+</body>
+</html>
